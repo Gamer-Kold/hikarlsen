@@ -5,9 +5,24 @@ class Engine:
         self.transposition_table = {} # to speed up alpha-beta
 
     def position(self, position, moves):
-        self.board = chess.Board(position)
+        self.board = chess.Board(" ".join(position))
         for move in moves:
             board.push_uci(move)
+
+
+    def search(self, stop_searching_event):
+        best_move = None
+        best_move_val = float("-inf")
+        for move in self.board.legal_moves:
+            if stop_searching_event.is_set():
+                break
+            self.board.push(move)
+            val = negamax(float("-inf"), float("inf"), 3)
+            if val > best_move_val:
+                best_move_val = val
+                best_move = move
+            self.board.pop()
+        return best_move
 
     def negamax(self, alpha, beta, depth):
         if depth == 0 or self.board.is_game_over():
