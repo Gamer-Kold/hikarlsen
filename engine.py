@@ -20,8 +20,8 @@ class Engine:
             if stop_searching_event.is_set():
                 break
             self.board.push(move)
-            print(f"checking move {move.uci()}")
-            val = self.negamax(float("-inf"), float("inf"), 4) * (-1 if self.board.turn else 1)
+            val = self.negamax(float("-inf"), float("inf"), 4)
+            print(f"info string move {move} val {val}")
             self.board.pop()
             if val > best_move_val:
                 best_move_val = val
@@ -32,7 +32,7 @@ class Engine:
         if depth == 0 or self.board.is_game_over():
             # negate evaluation if it's black's turn
             # this allow's the evaluation function to be absolute
-            val = self.evaluate() * (1 if self.board.turn else -1)
+            val = self.evaluate() * (-1 if self.board.turn else 1)
             return val
         # negative infinity is always lower than 
         # all integers so it's useful as an initial value
