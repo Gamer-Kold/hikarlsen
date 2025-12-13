@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import chess
 
 import sys
@@ -25,13 +26,12 @@ def handle_uci():
     sys.stdout.flush()
 
 def handle_position(command_parts):
-    # first 6 parts are the fen position
-    # we skip the redundant "moves" and then
-    # send the rest of the list as a list of moves
     if command_parts[1] == "startpos":
-        engine.position(None, command_parts[2:])
+        engine.position(None, command_parts[3:])
     else:
-        engine.position(command_parts[:6], command_parts[7:])
+        # we skip the redundant "moves" and then
+        # send the rest of the list as a list of moves
+        engine.position(command_parts[2:8], command_parts[9:])
     print("info string Position set.")
     sys.stdout.flush()
 

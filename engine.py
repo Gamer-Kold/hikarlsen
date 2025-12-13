@@ -10,7 +10,7 @@ class Engine:
         else:
             self.board = chess.Board(" ".join(position))
         for move in moves:
-            board.push_uci(move)
+            self.board.push_uci(move)
 
 
     def search(self, stop_searching_event):
