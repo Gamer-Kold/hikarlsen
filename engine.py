@@ -9,7 +9,7 @@ class Engine:
         for move in moves:
             board.push_uci(move)
 
-    def negamax(self, depth):
+    def negamax(self, alpha, beta, depth):
         if depth == 0 or self.board.is_game_over():
             # negate evaluation if it's black's turn
             # this allow's the evaluation function to be absolute
@@ -20,8 +20,17 @@ class Engine:
         val = float("-inf") 
 
         for candidate_move in self.board.legal_moves:
-            self.board.push(move) # make the move on the board
-            val = max(val, -self.negamax(depth - 1)) # evaluate new position
+            self.board.push(candidate_move) # make the move on the board
+
+            val = max(val, -self.negamax(-beta, -alpha, depth - 1)) # evaluate new position
+
+            # we found a move better than the best one found so far
+            alpha = max(val, alpha)
+
+            # prune if our opponent could force us into a worse move
+            if alpha >= beta:
+                break
+
             self.board.pop() # unmake move
             return val # return
 
