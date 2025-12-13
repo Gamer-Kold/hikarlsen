@@ -20,7 +20,7 @@ class Engine:
             if stop_searching_event.is_set():
                 break
             self.board.push(move)
-            val = self.negamax(float("-inf"), float("inf"), 7)
+            val = self.negamax(float("-inf"), float("inf"), 20) * (-1 if self.board.turn else 1)
             if val > best_move_val:
                 best_move_val = val
                 best_move = move
