@@ -35,4 +35,17 @@ class Engine:
             return val # return
 
     def evaluate(self):
-        pass
+        outcome = self.board.outcome()
+        if outcome != None:
+            if outcome.winner == None:
+                return 0
+            elif outcome.winner:
+                return float("inf")
+            else:
+                return float("-inf")
+        else:
+            opponent_moves = self.board.legal_moves.count()
+            self.board.turn = not self.board.turn
+            your_moves = self.board.legal_moves.count()
+            self.board.turn = not self.board.turn
+            return (your_moves - opponent_moves) * (1 if self.board.turn else -1) 
