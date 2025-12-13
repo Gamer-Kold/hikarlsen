@@ -62,8 +62,21 @@ class Engine:
             else:
                 return float("-inf")
         else:
-            opponent_moves = self.board.legal_moves.count()
-            self.board.turn = not self.board.turn
-            your_moves = self.board.legal_moves.count()
-            self.board.turn = not self.board.turn
-            return (your_moves - opponent_moves) * (1 if self.board.turn else -1) 
+                score = 0 
+                piece_values = {
+                    chess.PAWN: 1,
+                    chess.KNIGHT: 3,
+                    chess.BISHOP: 3,
+                    chess.ROOK: 5,
+                    chess.QUEEN: 9,
+                }
+                for piece in self.board.piece_map().values():
+                    if piece.piece_type == chess.KING:
+                        continue
+                    value = piece_values[piece.piece_type]
+                    if piece.color: # is it white
+                        score += value
+                    else: # is it black
+                        score -= value
+                        
+                return score
