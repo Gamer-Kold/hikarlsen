@@ -20,11 +20,12 @@ class Engine:
             if stop_searching_event.is_set():
                 break
             self.board.push(move)
-            val = self.negamax(float("-inf"), float("inf"), 20) * (-1 if self.board.turn else 1)
+            print(f"checking move {move.uci()}")
+            val = self.negamax(float("-inf"), float("inf"), 4) * (-1 if self.board.turn else 1)
+            self.board.pop()
             if val > best_move_val:
                 best_move_val = val
                 best_move = move
-            self.board.pop()
         return best_move
 
     def negamax(self, alpha, beta, depth):
@@ -39,8 +40,8 @@ class Engine:
 
         for candidate_move in self.board.legal_moves:
             self.board.push(candidate_move) # make the move on the board
-
             val = max(val, -self.negamax(-beta, -alpha, depth - 1)) # evaluate new position
+            self.board.pop() # unmake move
 
             # we found a move better than the best one found so far
             alpha = max(val, alpha)
@@ -49,8 +50,7 @@ class Engine:
             if alpha >= beta:
                 break
 
-            self.board.pop() # unmake move
-            return val # return
+        return val # return
 
 
     def evaluate(self):
