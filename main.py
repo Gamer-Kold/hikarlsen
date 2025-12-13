@@ -13,7 +13,7 @@ stop_searching_event = threading.Event()
 # a reference to the active search thread
 search_thread = None
 # a reference to the engine
-engine = Engine()
+engine = engine.Engine()
 
 # --- UCI Command Handlers (The main engine logic) ---
 
@@ -28,14 +28,18 @@ def handle_position(command_parts):
     # first 6 parts are the fen position
     # we skip the redundant "moves" and then
     # send the rest of the list as a list of moves
-    engine.position(command_parts[:6], command_parts[7:])
+    if command_parts[1] == "startpos":
+        engine.position(None, command_parts[2:])
+    else:
+        engine.position(command_parts[:6], command_parts[7:])
     print("info string Position set.")
     sys.stdout.flush()
 
 def _search_worker(go_command_args):
     # for future reference when search gets implemented 
     # print(f"info depth {depth} score cp {score} nodes {nodes} time {depth*500} pv {pv}")
-    print(f"bestmove {best_move_so_far}")
+    best_move = engine.search(stop_searching_event)
+    print(f"bestmove {best_move.uci()}")
     sys.stdout.flush()
     print("info string Search finished.")
     sys.stdout.flush()
@@ -43,7 +47,6 @@ def _search_worker(go_command_args):
 
 def handle_go(command_parts):
     global search_thread, stop_searching_event
-
     # if a search is already running, stop it first
     if search_thread and search_thread.is_alive():
         handle_stop()

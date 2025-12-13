@@ -5,7 +5,10 @@ class Engine:
         self.transposition_table = {} # to speed up alpha-beta
 
     def position(self, position, moves):
-        self.board = chess.Board(" ".join(position))
+        if position == None:
+            self.board = chess.Board()
+        else:
+            self.board = chess.Board(" ".join(position))
         for move in moves:
             board.push_uci(move)
 
@@ -17,7 +20,7 @@ class Engine:
             if stop_searching_event.is_set():
                 break
             self.board.push(move)
-            val = negamax(float("-inf"), float("inf"), 3)
+            val = self.negamax(float("-inf"), float("inf"), 3)
             if val > best_move_val:
                 best_move_val = val
                 best_move = move
