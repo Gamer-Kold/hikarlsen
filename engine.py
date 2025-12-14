@@ -21,7 +21,7 @@ class Engine:
             if stop_searching_event.is_set():
                 break
             self.board.push(move)
-            val = self.negamax(float("-inf"), -best_move_val, 4)
+            val = self.negamax(float("-inf"), -best_move_val, 3)
             print(f"info string Move {move} val {val}")
             sys.stdout.flush()
             self.board.pop()
@@ -150,5 +150,11 @@ class Engine:
                     for square in black_squares:
                         score -= material_value + PIECE_SQUARE_TABLES[piece_type][square]
 
-                    
-                return score
+                curr_player_moves = self.board.legal_moves.count()
+                self.board.turn = not self.board.turn
+                opp_player_moves = self.board.legal_moves.count()
+                self.board.turn = not self.board.turn
+
+                mobility = (1 if self.board.turn else -1) * (curr_player_moves - opp_player_moves) * 0.75
+
+                return score + mobility
