@@ -1,4 +1,5 @@
 import chess
+import sys
 class Engine:
     def __init__(self):
         self.board = None # will be set by the "position" command
@@ -20,8 +21,9 @@ class Engine:
             if stop_searching_event.is_set():
                 break
             self.board.push(move)
-            val = self.negamax(float("-inf"), float("inf"), 4)
-            print(f"info string move {move} val {val}")
+            val = self.negamax(float("-inf"), -best_move_val, 4)
+            print(f"info string Move {move} val {val}")
+            sys.stdout.flush()
             self.board.pop()
             if val > best_move_val:
                 best_move_val = val
@@ -30,14 +32,11 @@ class Engine:
 
     def negamax(self, alpha, beta, depth):
         if depth == 0 or self.board.is_game_over():
-            # negate evaluation if it's black's turn
-            # this allow's the evaluation function to be absolute
             val = self.evaluate() * (-1 if self.board.turn else 1)
             return val
         # negative infinity is always lower than 
         # all integers so it's useful as an initial value
         val = float("-inf") 
-
         for candidate_move in self.board.legal_moves:
             self.board.push(candidate_move) # make the move on the board
             val = max(val, -self.negamax(-beta, -alpha, depth - 1)) # evaluate new position
@@ -70,7 +69,7 @@ class Engine:
                     chess.BISHOP: 300,
                     chess.ROOK: 500,
                     chess.QUEEN: 900,
-                    chess.KING: 1000,
+                    chess.KING: 0,
                 }
                 PIECE_SQUARE_TABLES = {
                     chess.PAWN: [
@@ -94,44 +93,44 @@ class Engine:
                         -50,-40,-30,-30,-30,-30,-40,-50
                     ],
                     chess.BISHOP: [
-                        -20,-10,-10,-10,-10,-10,-10,-20,
-                        -10,  0,  0,  0,  0,  0,  0,-10,
-                        -10,  0,  5, 10, 10,  5,  0,-10,
-                        -10,  5,  5, 10, 10,  5,  5,-10,
-                        -10,  0, 10, 10, 10, 10,  0,-10,
-                        -10, 10, 10, 10, 10, 10, 10,-10,
-                        -10,  5,  0,  0,  0,  0,  5,-10,
-                        -20,-10,-10,-10,-10,-10,-10,-20
+                        -20, -10, -10, -10, -10, -10, -10, -20,
+                        -10,   0,   0,   0,   0,   0,   0, -10,
+                        -10,   0,   5,  10,  10,   5,   0, -10,
+                        -10,   5,   5,  10,  10,   5,   5, -10,
+                        -10,   0,  10,  10,  10,  10,   0, -10,
+                        -10,  10,  10,  10,  10,  10,  10, -10,
+                        -10,   5,   0,   0,   0,   0,   5, -10,
+                        -20, -10, -10, -10, -10, -10, -10, -20
                     ],
                     chess.ROOK: [
-                        0,  0,  0,  0,  0,  0,  0,  0,
-                        5, 10, 10, 10, 10, 10, 10,  5,
+                         0,  0,  0,  0,  0,  0,  0,  0,
+                         5, 10, 10, 10, 10, 10, 10,  5,
                         -5,  0,  0,  0,  0,  0,  0, -5,
                         -5,  0,  0,  0,  0,  0,  0, -5,
                         -5,  0,  0,  0,  0,  0,  0, -5,
                         -5,  0,  0,  0,  0,  0,  0, -5,
                         -5,  0,  0,  0,  0,  0,  0, -5,
-                        0,  0,  0,  5,  5,  0,  0,  0
+                         0,  0,  0,  5,  5,  0,  0,  0
                     ],
                     chess.QUEEN: [
-                        -20,-10,-10, -5, -5,-10,-10,-20,
-                        -10,  0,  0,  0,  0,  0,  0,-10,
-                        -10,  0,  5,  5,  5,  5,  0,-10,
-                        -5,  0,  5,  5,  5,  5,  0, -5,
-                        0,  0,  5,  5,  5,  5,  0, -5,
-                        -10,  5,  5,  5,  5,  5,  0,-10,
-                        -10,  0,  5,  0,  0,  0,  0,-10,
-                        -20,-10,-10, -5, -5,-10,-10,-20
+                        -20, -10, -10, -5, -5, -10, -10, -20,
+                        -10,   0,   0,  0,  0,   0,   0, -10,
+                        -10,   0,   5,  5,  5,   5,   0, -10,
+                         -5,   0,   5,  5,  5,   5,   0,  -5,
+                          0,   0,   5,  5,  5,   5,   0,  -5,
+                        -10,   5,   5,  5,  5,   5,   0, -10,
+                        -10,   0,   5,  0,  0,   0,   0, -10,
+                        -20, -10, -10, -5, -5, -10, -10, -20
                     ],
                     chess.KING: [
-                        -30,-40,-40,-50,-50,-40,-40,-30,
-                        -30,-40,-40,-50,-50,-40,-40,-30,
-                        -30,-40,-40,-50,-50,-40,-40,-30,
-                        -30,-40,-40,-50,-50,-40,-40,-30,
-                        -20,-30,-30,-40,-40,-30,-30,-20,
-                        -10,-20,-20,-20,-20,-20,-20,-10,
-                        20, 20,  0,  0,  0,  0, 20, 20,
-                        20, 30, 10,  0,  0, 10, 30, 20
+                        -30, -40, -40, -50, -50, -40, -40, -30,
+                        -30, -40, -40, -50, -50, -40, -40, -30,
+                        -30, -40, -40, -50, -50, -40, -40, -30,
+                        -30, -40, -40, -50, -50, -40, -40, -30,
+                        -20, -30, -30, -40, -40, -30, -30, -20,
+                        -10, -20, -20, -20, -20, -20, -20, -10,
+                         20,  20, -10, -10, -10, -10,  20,  20,
+                         20,  30,  10,   0,   0,  10,  30,  20
                     ]
                 }
                 
